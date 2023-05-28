@@ -5,66 +5,80 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gde-carl <gde-carl@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/27 17:21:21 by gde-carl          #+#    #+#             */
-/*   Updated: 2023/05/27 17:21:27 by gde-carl         ###   ########.fr       */
+/*   Created: 2023/05/28 18:43:15 by gde-carl          #+#    #+#             */
+/*   Updated: 2023/05/28 20:25:52 by gde-carl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "minitalk.h"
 
 void	display_banner(int pid)
 {
-	ft_printf("\n\t%s_      _  _      _        _____  ____  _     _  __%s\n", YELLOW, END);
-	ft_printf("\t%s/ \__/|/ \/ \  /|/ \      /__ __\/  _ \/ \   / |/ /%s\n", YELLOW, END);
-	ft_printf("\t%s| |\/||| || |\ ||| |        / \  | / \|| |   |   / %s\n", YELLOW, END);
-	ft_printf("\t%s| |  ||| || | \||| |        | |  | |-||| |_/\|   \ %s\n", YELLOW, END);
-	ft_printf("\t%s\_/  \|\_/\_/  \|\_/        \_/  \_/ \|\____/\_|\_\%s\n", YELLOW, END);
-	ft_printf("%s\n\t\tPID: %d%s\t\t\t%s", RED, pid, END);
+	ft_printf("\n\t%s███   ███  ██ ███    ██ ██      ████████  █████ ██  \
+	██   ██ %s\n", YELLOW, END);
+	ft_printf("\t%s████  ████ ██ ████   ██ ██        ██    ██   ██ ██     \
+	██  ██  %s\n", YELLOW, END);
+	ft_printf("\t%s██ ████ ██ ██ ██ ██  ██ ██        ██    ███████ ██     \
+	█████   %s\n", YELLOW, END);
+	ft_printf("\t%s██  ██  ██ ██ ██  ██ ██ ██        ██    ██   ██ ██     \
+	██  ██  %s\n", YELLOW, END);
+	ft_printf("\t%s██      ██ ██ ██   ████ ██        ██    ██   ██ ███████\
+	██   ██ %s\n", YELLOW, END);
+	ft_printf("\n\t%sPID: %d%s", RED, pid, END);
 }
 
-void	signal_error(void)
+int	isQuitKeyPressed()
 {
-	ft_printf("\n%sserver: unexpected error.%s\n", RED, END);
-	exit(EXIT_FAILURE);
-}
+	int	c;
 
-void	ft_server_receiver(int sig, siginfo_t *info, void *context)
-{
-	static	int	i;
-	static	char	c;
-
-	i = 0;
-	c = 0;
-	(void)context;
-	if (Sig == SIGUSR2)
-		c |= 0 << i;
-	else if (sig == SIGUSR1)
-		c |= 1 << i;
-	i++;
-	if (i == 8)
+	c = getchar();
+	if (c == 'q' || c == 'Q')
 	{
-		ft_printf("%c", c);
+		return (1);
+	}
+	return (0);
+}
+
+int	ft_handler(int signo, siginfo_t *info, void *context)
+{
+	static char	c;
+	static int	i;
+
+	if (signo == SIGUSR2)
+		c |= 1 << i;
+	if (++i == 8)
+	{
+		if (!c)
+		{
+			write(1, "\n", 1);
+			kill(info->si_pid, SIGUSR2);
+		}
+		write(1, &c, 1);
 		i = 0;
 		c = 0;
-		if (kill(info->si_pid, SIGUSR1) == -1)
-			signal_error();
-		exit(EXIT_FAILURE);
 	}
-	if (kill(info->si_pid, SIGUSR2) == -1)
-			signal_error();
+	(void)context;
+	return (0);
 }
 
-int main(void)
+int	main(void)
 {
-	struct sigaction	sa_sig;
-	ft_printf("PID: %d\n", GREEN, getpid());
-	while(1)
+	struct sigaction	sa;
+	int			pid;
+
+	display_banner(pid);
+	ft_printf("%d\n", getpid());
+	sa.sa_flags = SA_SIGINFO;
+	sa.sa_sigaction = (void *)ft_handler;
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
+	while (1)
 	{
-		sa_sig.sa_flags = SA_SIGINFO;
-		sa_sig.sa_sigaction = ft_server_receiver;
-		if (sigaction(SIGUSR1, &sa_sig, NULL) == -1)
-			ft_printf("ERROR: %s\n", strerror(errno));
-		if (sigaction(SIGUSR2, &sa_sig, NULL) == -1)
-			ft_printf("ERROR: %s\n", strerror(errno));
+		if (isQuitKeyPressed())
+		{
+			printf("%sExiting program...%s\n", YELLOW, END);
+			break;
+		}
 		pause();
 	}
 	return (0);

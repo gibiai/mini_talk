@@ -6,7 +6,7 @@
 /*   By: gde-carl <gde-carl@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 17:21:07 by gde-carl          #+#    #+#             */
-/*   Updated: 2023/05/27 17:24:39 by gde-carl         ###   ########.fr       */
+/*   Updated: 2023/05/27 17:48:05 by gde-carl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,13 @@ void	signal_error(void)
 
 void	end_coms(int sig)
 {
-	if (sig == SIGURS2)
+	if (sig == SIGUSR2)
 	{
 		ft_printf("Message received\n", GREEN);
 		exit(EXIT_SUCCESS);
 	}
+}
+
 void	ft_send_char_bit_by_bit(int pid, char c)
 {
 	int	bit;
@@ -37,13 +39,14 @@ void	ft_send_char_bit_by_bit(int pid, char c)
 		else
 			kill(pid, SIGUSR2);
 			c >>= 1;
-			i++;
+			bit++;
 	}
 }
-int main(int argc, char **argv)
+
+int	main(int argc, char **argv)
 {
-	int pid;
-	int i;
+	int	pid;
+	int	i;
 
 	signal(SIGUSR2, end_coms);
 	pid = ft_atoi(argv[1]);
@@ -60,5 +63,5 @@ int main(int argc, char **argv)
 			RED);
 		exit(EXIT_FAILURE);
 	}
-	exit(EXIT_SUCCES);
+	exit(EXIT_SUCCESS);
 }
