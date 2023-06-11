@@ -5,81 +5,65 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gde-carl <gde-carl@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/28 18:43:15 by gde-carl          #+#    #+#             */
-/*   Updated: 2023/05/28 20:25:52 by gde-carl         ###   ########.fr       */
+/*   Created: 2023/06/11 01:09:48 by gde-carl          #+#    #+#             */
+/*   Updated: 2023/06/11 01:09:58 by gde-carl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void	display_banner(int pid)
+void	ft_banner(void)
 {
-	ft_printf("\n\t%s███   ███  ██ ███    ██ ██      ████████  █████ ██  \
-	██   ██ %s\n", YELLOW, END);
+	ft_printf("\n\t%s███   ███  ██ ███    ██ ██      ████████  █████ ██   \
+	██   ██ %s\n", ORANGE, END);
 	ft_printf("\t%s████  ████ ██ ████   ██ ██        ██    ██   ██ ██     \
-	██  ██  %s\n", YELLOW, END);
+	██  ██  %s\n", ORANGE, END);
 	ft_printf("\t%s██ ████ ██ ██ ██ ██  ██ ██        ██    ███████ ██     \
-	█████   %s\n", YELLOW, END);
+	█████   %s\n", ORANGE, END);
 	ft_printf("\t%s██  ██  ██ ██ ██  ██ ██ ██        ██    ██   ██ ██     \
-	██  ██  %s\n", YELLOW, END);
+	██  ██  %s\n", ORANGE, END);
 	ft_printf("\t%s██      ██ ██ ██   ████ ██        ██    ██   ██ ███████\
-	██   ██ %s\n", YELLOW, END);
-	ft_printf("\n\t%sPID: %d%s", RED, pid, END);
+	██   ██ %s\n", ORANGE, END);
+	ft_printf("%s", END);
 }
 
-int	isQuitKeyPressed()
+void	ft_handler(int signal, siginfo_t *info, void *unused)
 {
-	int	c;
-
-	c = getchar();
-	if (c == 'q' || c == 'Q')
-	{
-		return (1);
-	}
-	return (0);
-}
-
-int	ft_handler(int signo, siginfo_t *info, void *context)
-{
-	static char	c;
+	static int	bit;
 	static int	i;
 
-	if (signo == SIGUSR2)
-		c |= 1 << i;
-	if (++i == 8)
+	(void)unused;
+	if (signal == SIGUSR1)
+		i += 1 << bit;
+	bit++;
+	if (bit == 8)
 	{
-		if (!c)
-		{
-			write(1, "\n", 1);
-			kill(info->si_pid, SIGUSR2);
-		}
-		write(1, &c, 1);
+		ft_printf("%c", i);
+		if (!i)
+			kill(info->si_pid, SIGUSR1);
+		bit = 0;
 		i = 0;
-		c = 0;
 	}
-	(void)context;
-	return (0);
 }
 
 int	main(void)
 {
+	pid_t				pid;
 	struct sigaction	sa;
-	int			pid;
 
-	display_banner(pid);
-	ft_printf("%d\n", getpid());
+	pid = getpid();
+	if (pid == -1)
+	{
+		ft_printf("%sERROR: Too many arguments%s\n" RED, END);
+		return (EXIT_FAILURE);
+	}
+	ft_banner();
+	ft_printf("\n\tPid  %u\n", pid);
 	sa.sa_flags = SA_SIGINFO;
-	sa.sa_sigaction = (void *)ft_handler;
+	sa.sa_sigaction = &ft_handler;
+	sigemptyset(&sa.sa_mask);
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	while (1)
-	{
-		if (isQuitKeyPressed())
-		{
-			printf("%sExiting program...%s\n", YELLOW, END);
-			break;
-		}
 		pause();
-	}
-	return (0);
 }

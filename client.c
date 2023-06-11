@@ -5,63 +5,63 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gde-carl <gde-carl@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/27 17:21:07 by gde-carl          #+#    #+#             */
-/*   Updated: 2023/05/27 17:48:05 by gde-carl         ###   ########.fr       */
+/*   Created: 2023/06/11 01:05:33 by gde-carl          #+#    #+#             */
+/*   Updated: 2023/06/11 01:09:03 by gde-carl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void	signal_error(void)
+static void	ft_sent(int sig)
 {
-	ft_printf("\n%sserver: unexpected error.%s\n", RED, END);
-	exit(EXIT_FAILURE);
-}
-
-void	end_coms(int sig)
-{
-	if (sig == SIGUSR2)
+	if (sig == SIGUSR1)
 	{
-		ft_printf("Message received\n", GREEN);
+		ft_printf("\033[32mMessage sent!\n");
 		exit(EXIT_SUCCESS);
 	}
 }
 
-void	ft_send_char_bit_by_bit(int pid, char c)
+void	ft_byte(int pid, char c)
 {
-	int	bit;
+	int	i;
 
-	bit = 0;
-	while (bit < 8)
+	i = 0;
+	while (i < 8)
 	{
-		if (c & 1)
+		if (c & (1 << i++))
 			kill(pid, SIGUSR1);
 		else
 			kill(pid, SIGUSR2);
-			c >>= 1;
-			bit++;
+		usleep(300);
 	}
 }
 
-int	main(int argc, char **argv)
+void	ft_bit(int pid, char *msg)
 {
-	int	pid;
-	int	i;
+	while (*msg)
+		ft_byte(pid, *msg++);
+}
 
-	signal(SIGUSR2, end_coms);
-	pid = ft_atoi(argv[1]);
-	i = 0;
-	if (argc == 3)
+int	main(int argc, char *argv[])
+{
+	pid_t	pid;
+	char	*str;
+
+	if (argc != 3)
 	{
-		while (argv[2][i])
-			ft_send_char_bit_by_bit(pid, argv[2][i++]);
-		ft_send_char_bit_by_bit(pid, '\0');
-	}
-	else
-	{
-		ft_printf("%susage: ./client <server_pid> <text to send>%s\n",
-			RED);
+		ft_printf("%s./client [server-pid] [message]%s\n", RED, END);
 		exit(EXIT_FAILURE);
 	}
-	exit(EXIT_SUCCESS);
+	str = argv[2];
+	pid = ft_atoi(argv[1]);
+	if (pid <= 0)
+	{
+		ft_printf("%sInvalid PID%s\n", RED, END);
+		exit(EXIT_FAILURE);
+	}
+	signal(SIGUSR1, &ft_sent);
+	ft_bit(pid, str++);
+	ft_byte(pid, '\n');
+	ft_byte(pid, '\0');
+	return (0);
 }
