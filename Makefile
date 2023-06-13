@@ -1,3 +1,14 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: gde-carl <gde-carl@student.42roma.it>      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/06/13 22:59:29 by gde-carl          #+#    #+#              #
+#    Updated: 2023/06/13 22:59:33 by gde-carl         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
 NAME		= minitalk
 CLIENT		= client
@@ -73,5 +84,6 @@ usage:
 
 norm:
 	@$(NORMINETTE) $(SRC_C) $(SRC_S) $(INC) || true	
- 
+
+
 .PHONY: all clean fclean re norm
