@@ -6,7 +6,7 @@
 /*   By: gde-carl <gde-carl@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/11 01:09:48 by gde-carl          #+#    #+#             */
-/*   Updated: 2023/06/11 01:09:58 by gde-carl         ###   ########.fr       */
+/*   Updated: 2023/06/13 22:44:49 by gde-carl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_banner(void)
 {
-	ft_printf("\n\t%s███   ███  ██ ███    ██ ██      ████████  █████ ██   \
+	ft_printf("\n\t%s███    ███ ██ ███    ██ ██     ████████  █████  ██   \
 	██   ██ %s\n", ORANGE, END);
 	ft_printf("\t%s████  ████ ██ ████   ██ ██        ██    ██   ██ ██     \
 	██  ██  %s\n", ORANGE, END);
@@ -34,7 +34,7 @@ void	ft_handler(int signal, siginfo_t *info, void *unused)
 
 	(void)unused;
 	if (signal == SIGUSR1)
-		i += 1 << bit;
+		i |= (1 << bit);
 	bit++;
 	if (bit == 8)
 	{
