@@ -6,13 +6,13 @@
 #    By: gde-carl <gde-carl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/04 15:47:29 by gde-carl          #+#    #+#              #
-#    Updated: 2023/06/18 18:32:42 by gde-carl         ###   ########.fr        #
+#    Updated: 2023/06/18 19:06:05 by gde-carl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= libft.a
 
-SRCS_DIR= ./
+SRCS_DIR= ../libft/
 
 SRCS	= ft_isdigit.c ft_memset.c ft_strjoin.c ft_atoi.c ft_strtrim.c ft_isprint.c \
 		  ft_putchar_fd.c ft_strlcat.c ft_substr.c ft_itoa.c ft_putendl_fd.c \
