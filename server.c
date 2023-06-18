@@ -5,16 +5,16 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gde-carl <gde-carl@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/11 01:09:48 by gde-carl          #+#    #+#             */
-/*   Updated: 2023/06/13 22:44:49 by gde-carl         ###   ########.fr       */
+/*   Created: 2023/06/18 18:13:27 by gde-carl          #+#    #+#             */
+/*   Updated: 2023/06/18 18:13:30 by gde-carl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void	ft_banner(void)
+void	ft_display_banner(void)
 {
-	ft_printf("\n\t%s███    ███ ██ ███    ██ ██     ████████  █████  ██   \
+	ft_printf("\n\t%s███   ███  ██ ███    ██ ██      ████████  █████ ██  \
 	██   ██ %s\n", ORANGE, END);
 	ft_printf("\t%s████  ████ ██ ████   ██ ██        ██    ██   ██ ██     \
 	██  ██  %s\n", ORANGE, END);
@@ -54,10 +54,10 @@ int	main(void)
 	pid = getpid();
 	if (pid == -1)
 	{
-		ft_printf("%sERROR: Too many arguments%s\n" RED, END);
+		ft_printf("%sERROR: Too many arguments%s\n", RED, END);
 		return (EXIT_FAILURE);
 	}
-	ft_banner();
+	ft_display_banner();
 	ft_printf("\n\tPid  %u\n", pid);
 	sa.sa_flags = SA_SIGINFO;
 	sa.sa_sigaction = &ft_handler;

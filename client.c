@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gde-carl <gde-carl@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/11 01:05:33 by gde-carl          #+#    #+#             */
-/*   Updated: 2023/06/11 01:09:03 by gde-carl         ###   ########.fr       */
+/*   Created: 2023/06/18 18:13:40 by gde-carl          #+#    #+#             */
+/*   Updated: 2023/06/18 18:13:43 by gde-carl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-static void	ft_sent(int sig)
+void	ft_send(int sig)
 {
 	if (sig == SIGUSR1)
 	{
@@ -21,7 +21,7 @@ static void	ft_sent(int sig)
 	}
 }
 
-void	ft_byte(int pid, char c)
+void	ft_bit(int pid, char c)
 {
 	int	i;
 
@@ -36,32 +36,32 @@ void	ft_byte(int pid, char c)
 	}
 }
 
-void	ft_bit(int pid, char *msg)
+void	ft_byte(int pid, char *msg)
 {
 	while (*msg)
-		ft_byte(pid, *msg++);
+		ft_bit(pid, *msg++);
 }
 
-int	main(int argc, char *argv[])
+int	main(int ac, char **av)
 {
 	pid_t	pid;
 	char	*str;
 
-	if (argc != 3)
+	if (ac != 3)
 	{
 		ft_printf("%s./client [server-pid] [message]%s\n", RED, END);
 		exit(EXIT_FAILURE);
 	}
-	str = argv[2];
-	pid = ft_atoi(argv[1]);
+	str = av[2];
+	pid = ft_atoi(av[1]);
 	if (pid <= 0)
 	{
 		ft_printf("%sInvalid PID%s\n", RED, END);
 		exit(EXIT_FAILURE);
 	}
-	signal(SIGUSR1, &ft_sent);
-	ft_bit(pid, str++);
-	ft_byte(pid, '\n');
-	ft_byte(pid, '\0');
+	signal(SIGUSR1, &ft_send);
+	ft_byte(pid, str++);
+	ft_bit(pid, '\n');
+	ft_bit(pid, '\0');
 	return (0);
 }
